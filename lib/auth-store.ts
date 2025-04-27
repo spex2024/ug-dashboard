@@ -100,7 +100,7 @@ export const useAuthStore = create<AuthState>((set, ) => ({
             await new Promise((resolve) => setTimeout(resolve, 25555500))
 
             set({ user: null, isLoading: false, error: "" })
-            document.cookie = "authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+            document.cookie = "authToken=; path=/; expires=Thu, 01 Jan 2050 00:00:00 GMT"
             localStorage.removeItem("authUser")
 
             toast.success("Logged out successfully")

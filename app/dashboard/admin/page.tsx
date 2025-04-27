@@ -71,7 +71,7 @@ export default function AdminPage() {
     const [currentAdmin, setCurrentAdmin] = useState<Admin | null>(null)
 
     // Get admin store state and actions
-    const { admins, loading, error, fetchAdmins, addAdmin, updateAdmin, deleteAdmin } = useAdminStore()
+    const { admins,  error, fetchAdmins, addAdmin, updateAdmin, deleteAdmin } = useAdminStore()
 
     // Form state
     const [formData, setFormData] = useState<FormData>({
@@ -506,14 +506,7 @@ export default function AdminPage() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                    {loading ? (
-                        <div className="flex justify-center items-center p-12">
-                            <div className="flex flex-col items-center">
-                                <Loader2 className="h-10 w-10 animate-spin text-[#8B4513] dark:text-gray-400" />
-                                <span className="mt-4 text-gray-600 dark:text-gray-400">Loading administrators...</span>
-                            </div>
-                        </div>
-                    ) : (
+
                         <div className="overflow-x-auto px-5">
                             <Table>
                                 <TableHeader className="bg-gray-50 dark:bg-gray-800/50">
@@ -695,7 +688,7 @@ export default function AdminPage() {
                                 </TableBody>
                             </Table>
                         </div>
-                    )}
+
                 </CardContent>
             </Card>
 
