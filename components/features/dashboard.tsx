@@ -77,7 +77,7 @@ interface DistributionItem {
 }
 
 export default function Dashboard() {
-    const { officers, fetchOfficers, loading, error } = useOfficerStore()
+    const { officers, fetchOfficers, error } = useOfficerStore()
 
     useEffect(() => {
         fetchOfficers()
