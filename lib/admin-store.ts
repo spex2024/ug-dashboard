@@ -20,6 +20,14 @@ interface AdminStoreState {
     deleteAdmin: (id: string) => Promise<void>
 }
 
+const getCookie = (name: string): string | null => {
+    if (typeof document === "undefined") return null
+    const value = `; ${document.cookie}`
+    const parts = value.split(`; ${name}=`)
+    if (parts.length === 2) return parts.pop()?.split(";").shift() || null
+    return null
+}
+
 const useAdminStore = create<AdminStoreState>((set) => ({
     admins: [],
     loading: false,
@@ -29,7 +37,9 @@ const useAdminStore = create<AdminStoreState>((set) => ({
     fetchAdmins: async () => {
         set({ loading: true, error: null })
         try {
-            const res = await axios.get<Admin[]>(`${API}/admins`, { withCredentials: true })
+            const res = await axios.get<Admin[]>(`${API}/admins`, {  headers: {
+                    Authorization: `Bearer ${getCookie("authToken")}`,
+                },})
             set({ admins: res.data, loading: false })
         } catch (error) {
             const errorMessage =
