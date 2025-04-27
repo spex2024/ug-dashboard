@@ -44,6 +44,15 @@ const api = axios.create({
     withCredentials: true,
 });
 
+// Helper: cookie parser
+const getCookie = (name: string): string | null => {
+    if (typeof document === "undefined") return null
+    const value = `; ${document.cookie}`
+    const parts = value.split(`; ${name}=`)
+    if (parts.length === 2) return parts.pop()?.split(";").shift() || null
+    return null
+}
+
 
 export const useOfficerStore = create<OfficerStore>((set, get) => ({
     officers: [],
@@ -53,7 +62,11 @@ export const useOfficerStore = create<OfficerStore>((set, get) => ({
     fetchOfficers: async () => {
         set({ loading: true })
         try {
-            const res = await api.get("/api/employee/getAll")
+            const res = await api.get("/api/employee/getAll",{
+                headers: {
+                    Authorization: `Bearer ${getCookie("authToken")}`,
+                }
+            })
             set({ officers: res.data, loading: false, error: null })
         } catch (error) {
             if (error instanceof AxiosError) {
