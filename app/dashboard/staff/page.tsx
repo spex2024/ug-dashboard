@@ -1,13 +1,13 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
+import { Mail, Phone, Edit, Trash2, User, Briefcase, CreditCard, Shield, Users, Download } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Mail, Phone, Edit, Trash2, User, Briefcase, CreditCard, Shield, Users, Download } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -34,42 +34,14 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
-
-// In the imports section, add the Tooltip components
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
-// At the top of the file, add the import for the officer store
+// Import enums from separate file
+import { JuniorOfficerRank, SeniorOfficerRank, getFullRankName } from "@/lib/officer-ranks"
+
+// Import Officer type and store
 import type { Officer } from "@/lib/officer"
-// Add the import for useOfficerStore at the top of the file
 import { useOfficerStore } from "@/lib/officer"
-
-// Define rank enums
-export enum JuniorOfficerRank {
-    RFM = "Recruit Fireman",
-    RFW = "Recruit Firewoman",
-    FM = "Fireman",
-    FW = "Firewoman",
-    LFM = "Leading Fireman",
-    LFW = "Leading Firewoman",
-    SUB = "Sub-Officer",
-    ASTNO = "Assistant Station Officer",
-    AGO = "Acting Group Officer",
-    "STNO II" = "Station Officer II",
-    "STNO I" = "Station Officer I",
-    DGO = "Divisional Officer",
-    GO = "Group Officer",
-}
-
-export enum SeniorOfficerRank {
-    "ADO II" = "Assistant Divisional Officer II",
-    "ADO I" = "Assistant Divisional Officer I",
-    "DO III" = "Divisional Officer III",
-    "DO II" = "Divisional Officer II",
-    "DO I" = "Divisional Officer I",
-    "AFCO II" = "Assistant Fire Commander Officer II",
-    "ACFO I" = "Assistant Chief Fire Officer I",
-    DCFO = "Deputy Chief Fire Officer",
-}
 
 // Define colors
 const colors = {
@@ -80,23 +52,13 @@ const colors = {
 }
 
 // Add CSS variables for consistent theming with better dark mode contrast
-document.documentElement.style.setProperty("--color-brown", colors.brown)
-document.documentElement.style.setProperty("--color-crimson", colors.crimson)
-document.documentElement.style.setProperty("--color-yellow", colors.yellow)
-document.documentElement.style.setProperty("--color-black", colors.black)
-
-const getFullRankName = (rankCode: string | undefined): string => {
-    if (!rankCode) return "Unknown Rank" // check for undefined first
-
-    if (Object.prototype.hasOwnProperty.call(JuniorOfficerRank, rankCode)) {
-        return JuniorOfficerRank[rankCode as keyof typeof JuniorOfficerRank]
+const addCustomColorVars = () => {
+    if (typeof document !== "undefined") {
+        document.documentElement.style.setProperty("--color-brown", colors.brown)
+        document.documentElement.style.setProperty("--color-crimson", colors.crimson)
+        document.documentElement.style.setProperty("--color-yellow", colors.yellow)
+        document.documentElement.style.setProperty("--color-black", colors.black)
     }
-
-    if (Object.prototype.hasOwnProperty.call(SeniorOfficerRank, rankCode)) {
-        return SeniorOfficerRank[rankCode as keyof typeof SeniorOfficerRank]
-    }
-
-    return rankCode
 }
 
 // Replace the StaffTableComponent function with this enhanced version
@@ -110,7 +72,7 @@ function StaffTableComponent({
     onRowClick: (staff: Officer, action?: "view" | "edit" | "delete") => void
 }) {
     return (
-        <div className="rounded-xl border overflow-hidden shadow-none ">
+        <div className="rounded-xl border overflow-hidden shadow-none">
             <Table>
                 <TableHeader>
                     <TableRow className="bg-gradient-to-r from-[#8B4513] to-[#8B4513]/90 text-white dark:bg-gradient-to-r dark:from-gray-900 dark:to-gray-950 px-10">
@@ -388,8 +350,6 @@ function StaffDetailDialog({
                         </div>
                     </div>
                 </DialogHeader>
-
-                {/* Stats cards */}
 
                 {/* Tabs content */}
                 <div className="px-6 pb-6">
@@ -773,7 +733,6 @@ function StaffEditDialog({
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="phoneNumber">Phone Number</Label>
-
                                     <Input id="phoneNumber" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
                                 </div>
                             </div>
@@ -888,7 +847,46 @@ function StaffEditDialog({
     )
 }
 
-export { StaffTableComponent, StaffDetailDialog, StaffEditDialog }
+// Delete confirmation dialog component
+function DeleteConfirmDialog({
+                                 staff,
+                                 isOpen,
+                                 onClose,
+                                 onConfirm,
+                             }: {
+    staff: Officer | null
+    isOpen: boolean
+    onClose: () => void
+    onConfirm: (staff: Officer) => void
+}) {
+    if (!staff) return null
+
+    return (
+        <AlertDialog open={isOpen} onOpenChange={onClose}>
+            <AlertDialogContent className="bg-white dark:bg-gray-900">
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete the staff record for{" "}
+                        <span className="font-semibold">
+              {staff.firstName} {staff.lastName}
+            </span>{" "}
+                        and remove all associated data from the server.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                        className="bg-[#DC143C] dark:bg-[#DC143C]/80 dark:hover:bg-[#DC143C] text-white"
+                        onClick={() => onConfirm(staff)}
+                    >
+                        Delete
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    )
+}
 
 // Main StaffTable component
 export default function StaffTable() {
@@ -907,6 +905,11 @@ export default function StaffTable() {
     const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+
+    // Add CSS variables on component mount
+    useEffect(() => {
+        addCustomColorVars()
+    }, [])
 
     // Move the conditional logic inside the useEffect hook
     useEffect(() => {
@@ -992,12 +995,12 @@ export default function StaffTable() {
     })
 
     return (
-        <div className="p-6 space-y-6  dark:bg-transparent transition-all duration-300 min-h-screen shadow-none">
+        <div className="p-6 space-y-6 dark:bg-transparent transition-all duration-300 min-h-screen shadow-none">
             {/* Header with title and search/filter */}
             <div className="grid gap-4 md:grid-cols-2">
                 {/* Title card */}
-                <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950  p-4 rounded-xl shadow-md border border-[#8B4513]/10 flex items-center gap-4">
-                    <div className="bg-[#8B4513]/10 p-3 rounded-full  dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950 ">
+                <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950 p-4 rounded-xl shadow-md border border-[#8B4513]/10 flex items-center gap-4">
+                    <div className="bg-[#8B4513]/10 p-3 rounded-full dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950">
                         <Users className="h-6 w-6 text-[#8B4513] dark:text-gray-400" />
                     </div>
                     <div>
@@ -1006,7 +1009,7 @@ export default function StaffTable() {
                     </div>
                     <Badge
                         variant="outline"
-                        className="ml-2 bg-[#8B4513]/10 text-[#8B4513] hover:bg-[#8B4513]/20 dark:text-gray-300 "
+                        className="ml-2 bg-[#8B4513]/10 text-[#8B4513] hover:bg-[#8B4513]/20 dark:text-gray-300"
                     >
                         {officers.length} Staff Members
                     </Badge>
@@ -1048,7 +1051,7 @@ export default function StaffTable() {
 
                     <Button
                         variant="outline"
-                        className="border-[#8B4513]/20 text-[#8B4513] hover:bg-[#8B4513]/10 hover:text-[#8B4513] hover:border-[#8B4513]/30 dark:text-gray-400 "
+                        className="border-[#8B4513]/20 text-[#8B4513] hover:bg-[#8B4513]/10 hover:text-[#8B4513] hover:border-[#8B4513]/30 dark:text-gray-400"
                     >
                         <Download className="h-4 w-4 mr-2" />
                         Export
@@ -1057,7 +1060,7 @@ export default function StaffTable() {
             </div>
 
             <Tabs defaultValue="all" className="space-y-4" onValueChange={setActiveTab} value={activeTab}>
-                <TabsList className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950  duration-300 p-1 border border-[#8B4513]/10 rounded-lg">
+                <TabsList className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950 duration-300 p-1 border border-[#8B4513]/10 rounded-lg">
                     <TabsTrigger
                         value="all"
                         className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white rounded-md"
@@ -1122,46 +1125,5 @@ export default function StaffTable() {
                 onConfirm={handleDeleteStaff}
             />
         </div>
-    )
-}
-
-// Add the DeleteConfirmDialog component that was missing
-function DeleteConfirmDialog({
-                                 staff,
-                                 isOpen,
-                                 onClose,
-                                 onConfirm,
-                             }: {
-    staff: Officer | null
-    isOpen: boolean
-    onClose: () => void
-    onConfirm: (staff: Officer) => void
-}) {
-    if (!staff) return null
-
-    return (
-        <AlertDialog open={isOpen} onOpenChange={onClose}>
-            <AlertDialogContent className="bg-white dark:bg-gray-900">
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete the staff record for{" "}
-                        <span className="font-semibold">
-              {staff.firstName} {staff.lastName}
-            </span>{" "}
-                        and remove all associated data from the server.
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                        className="bg-[#DC143C] dark:bg-[#DC143C]/80 dark:hover:bg-[#DC143C] text-white"
-                        onClick={() => onConfirm(staff)}
-                    >
-                        Delete
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
     )
 }
