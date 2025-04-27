@@ -72,13 +72,13 @@ export default function LogsPage() {
     const getTypeIcon = (type: string) => {
         switch (type) {
             case "auth":
-                return <User className="h-4 w-4 text-[#8B4513]" />
+                return <User className="h-4 w-4 text-gray-300" />
             case "admin":
-                return <ShieldCheck className="h-4 w-4 text-[#8B4513]" />
+                return <ShieldCheck className="h-4 w-4 text-gray-300" />
             case "data":
-                return <FileText className="h-4 w-4 text-[#8B4513]" />
+                return <FileText className="h-4 w-4 text-gray-300" />
             case "system":
-                return <Clock className="h-4 w-4 text-[#8B4513]" />
+                return <Clock className="h-4 w-4 text-gray-300" />
             default:
                 return null
         }
@@ -88,44 +88,47 @@ export default function LogsPage() {
         switch (type) {
             case "auth":
                 return (
-                    <Badge variant="outline" className="bg-[#8B4513]/10 text-[#8B4513] border-[#8B4513]/20">
-                        {getTypeIcon(type)} <span className="ml-1">Authentication</span>
+                    <Badge
+                        variant="outline"
+                        className="flex items-center px-3 py-1 rounded-full bg-[#8B4513]/10 text-gray-300 border-[#8B4513]/20"
+                    >
+                        {getTypeIcon(type)} <span className="ml-1.5">Authentication</span>
                     </Badge>
                 )
             case "admin":
                 return (
                     <Badge
                         variant="outline"
-                        className="bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/30"
+                        className="flex items-center px-3 py-1 rounded-full bg-[#8B4513]/10 text-gray-300 border-[#8B4513]/20"
                     >
-                        {getTypeIcon(type)} <span className="ml-1">Admin</span>
+                        {getTypeIcon(type)} <span className="ml-1.5">Authentication</span>
                     </Badge>
                 )
             case "data":
                 return (
                     <Badge
                         variant="outline"
-                        className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/30"
+                        className="flex items-center px-3 py-1 rounded-full bg-[#8B4513]/10 text-gray-300 border-[#8B4513]/20"
                     >
-                        {getTypeIcon(type)} <span className="ml-1">Data</span>
+                        {getTypeIcon(type)} <span className="ml-1.5">Authentication</span>
                     </Badge>
                 )
             case "system":
                 return (
                     <Badge
                         variant="outline"
-                        className="bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800/30"
+                        className="flex items-center px-3 py-1 rounded-full bg-[#8B4513]/10 text-gray-300 border-[#8B4513]/20"
                     >
-                        {getTypeIcon(type)} <span className="ml-1">System</span>
+                        {getTypeIcon(type)} <span className="ml-1.5">Authentication</span>
                     </Badge>
                 )
             default:
                 return (
                     <Badge
                         variant="outline"
-                        className="bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800/20 dark:text-gray-400 dark:border-gray-700/30"
+                        className="flex items-center px-3 py-1 rounded-full bg-[#8B4513]/10 text-gray-300 border-[#8B4513]/20"
                     >
-                        <span className="ml-1">{type}</span>
+                        <span className="ml-1.5">{type}</span>
                     </Badge>
                 )
         }
@@ -135,31 +138,35 @@ export default function LogsPage() {
         <div className="space-y-6">
             {isLoading ? (
                 <div className="flex items-center justify-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#8B4513]"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#8B4513] relative">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <ClipboardList className="h-6 w-6 text-gray-300/50" />
+                        </div>
+                    </div>
                 </div>
             ) : (
                 <>
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <h1 className="text-3xl font-bold text-[#8B4513] dark:text-[#8B4513]">Activity Logs</h1>
+                            <h1 className="text-3xl font-bold text-gray-300 dark:text-gray-300">Activity Logs</h1>
                             <p className=" dark:text-gray-400 mt-1">Track all system activities and user actions</p>
                         </div>
 
                         {/* Search and filters */}
                         <div className="flex flex-col sm:flex-row gap-3">
                             <div className="relative">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                 <Input
                                     type="search"
                                     placeholder="Search logs..."
-                                    className="pl-9 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                                    className="pl-10 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-lg"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </div>
 
                             <Select value={logType} onValueChange={setLogType}>
-                                <SelectTrigger className="w-[140px] bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                                <SelectTrigger className="w-[140px] bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-lg">
                                     <SelectValue placeholder="Filter by type" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -172,7 +179,7 @@ export default function LogsPage() {
                             </Select>
 
                             <Select value={dateRange} onValueChange={setDateRange}>
-                                <SelectTrigger className="w-[140px] bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                                <SelectTrigger className="w-[140px] bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-lg">
                                     <SelectValue placeholder="Date range" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -185,38 +192,51 @@ export default function LogsPage() {
                         </div>
                     </div>
 
-                    <Card className="border border-gray-200 dark:border-gray-800 rounded-xl shadow-md bg-white dark:bg-gray-900 overflow-hidden">
-                        <CardHeader className="border-b border-gray-200 dark:border-gray-800 pb-4   ">
+                    <Card className="border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm bg-white dark:bg-gray-900 overflow-hidden">
+                        <CardHeader className="border-b border-gray-200 dark:border-gray-800 pb-4 bg-gray-50 dark:bg-gray-800/30 px-6">
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                                <CardTitle className="text-[#8B4513] dark:text-gray-400 flex items-center text-xl font-bold uppercase">
+                                <CardTitle className="text-gray-300 dark:text-gray-400 flex items-center text-xl font-bold uppercase">
                                     <ClipboardList className="h-5 w-5 mr-2" />
                                     System Activity Logs
                                 </CardTitle>
-                                <div className="text-sm dark:text-gray-400 text-[#8B4513]">
+                                <div className="text-sm dark:text-gray-400 text-gray-300">
                                     {filteredLogs.length} {filteredLogs.length === 1 ? "entry" : "entries"} found
                                 </div>
                             </div>
                         </CardHeader>
                         <CardContent className="p-0">
                             <div className="overflow-x-auto">
-                                <Table>
+                                <Table className="w-full">
                                     <TableHeader className="bg-gray-50 dark:bg-gray-800/50">
-                                        <TableRow>
-                                            <TableHead className="text-[#8B4513] dark:text-gray-400 font-semibold">Date & Time</TableHead>
-                                            <TableHead className="text-[#8B4513] dark:text-gray-400 font-semibold">User</TableHead>
-                                            <TableHead className="text-[#8B4513] dark:text-gray-400 font-semibold">Action</TableHead>
-                                            <TableHead className="text-[#8B4513] dark:text-gray-400 font-semibold">IP</TableHead>
-                                            <TableHead className="text-[#8B4513] dark:text-gray-400 font-semibold">Location</TableHead>
-                                            <TableHead className="text-[#8B4513] dark:text-gray-400 font-semibold">
+                                        <TableRow className="border-b border-gray-200 dark:border-gray-700">
+                                            <TableHead className="text-gray-300 dark:text-gray-400 font-semibold py-4 px-6 text-left whitespace-nowrap">
+                                                Date & Time
+                                            </TableHead>
+                                            <TableHead className="text-gray-300 dark:text-gray-400 font-semibold py-4 px-6 text-left whitespace-nowrap">
+                                                User
+                                            </TableHead>
+                                            <TableHead className="text-gray-300 dark:text-gray-400 font-semibold py-4 px-6 text-left whitespace-nowrap">
+                                                Action
+                                            </TableHead>
+                                            <TableHead className="text-gray-300 dark:text-gray-400 font-semibold py-4 px-6 text-left whitespace-nowrap">
+                                                IP
+                                            </TableHead>
+                                            <TableHead className="text-gray-300 dark:text-gray-400 font-semibold py-4 px-6 text-left whitespace-nowrap">
+                                                Location
+                                            </TableHead>
+                                            <TableHead className="text-gray-300 dark:text-gray-400 font-semibold py-4 px-6 text-left whitespace-nowrap">
                                                 Operating System
                                             </TableHead>
                                         </TableRow>
                                     </TableHeader>
-                                    <TableBody>
+                                    <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
                                         {filteredLogs.length === 0 ? (
                                             <TableRow>
-                                                <TableCell colSpan={6} className="text-center py-12 text-gray-400 dark:text-gray-400">
-                                                    No logs found matching your criteria
+                                                <TableCell colSpan={6} className="text-center py-16 text-gray-400 dark:text-gray-500">
+                                                    <div className="flex flex-col items-center justify-center">
+                                                        <ClipboardList className="h-12 w-12 text-gray-300 dark:text-gray-600 mb-3" />
+                                                        <p>No logs found matching your criteria</p>
+                                                    </div>
                                                 </TableCell>
                                             </TableRow>
                                         ) : (
@@ -225,20 +245,37 @@ export default function LogsPage() {
                                                     key={log.adminId._id}
                                                     className={`${index % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50/50 dark:bg-gray-800/10"} hover:bg-gray-100 dark:hover:bg-gray-800/20 transition-colors`}
                                                 >
-                                                    <TableCell className="font-medium">
-                                                        <div className="text-[#8B4513] dark:text-gray-400">{formatDate(log.timestamp)}</div>
-                                                        <div className="text-xs  dark:text-gray-400">{formatTime(log.timestamp)}</div>
+                                                    <TableCell className="py-4 px-6">
+                                                        <div className="flex flex-col">
+                              <span className="text-gray-300 dark:text-gray-300 font-medium">
+                                {formatDate(log.timestamp)}
+                              </span>
+                                                            <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {formatTime(log.timestamp)}
+                              </span>
+                                                        </div>
                                                     </TableCell>
-                                                    <TableCell>
-                                                        <div className="font-medium">{log.adminId.fullName}</div>
+                                                    <TableCell className="py-4 px-6">
+                                                        <div className="flex items-center">
+                                                            <div className="h-8 w-8 rounded-full bg-[#8B4513]/10 flex items-center justify-center mr-3">
+                                                                <User className="h-4 w-4 text-gray-300" />
+                                                            </div>
+                                                            <span className="font-medium">{log.adminId.fullName}</span>
+                                                        </div>
                                                     </TableCell>
-                                                    <TableCell>{getActionBadge(log.action)}</TableCell>
-                                                    <TableCell className="font-mono text-sm">{log.ip}</TableCell>
-                                                    <TableCell>
-                                                        <div>{log.location.country}</div>
-                                                        <div className="text-xs dark:text-gray-400">{log.location.timezone}</div>
+                                                    <TableCell className="py-4 px-6">{getActionBadge(log.action)}</TableCell>
+                                                    <TableCell className="py-4 px-6 font-mono text-sm">{log.ip}</TableCell>
+                                                    <TableCell className="py-4 px-6">
+                                                        <div className="flex flex-col">
+                                                            <span className="font-medium">{log.location.country}</span>
+                                                            <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {log.location.timezone}
+                              </span>
+                                                        </div>
                                                     </TableCell>
-                                                    <TableCell className="text-sm  dark:text-gray-400">{log.userAgent}</TableCell>
+                                                    <TableCell className="py-4 px-6 text-sm text-gray-600 dark:text-gray-400">
+                                                        {log.userAgent}
+                                                    </TableCell>
                                                 </TableRow>
                                             ))
                                         )}

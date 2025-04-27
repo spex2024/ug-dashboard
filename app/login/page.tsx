@@ -18,12 +18,14 @@ interface FormValues {
     password: string
 }
 
-const backgroundImages = ["https://res.cloudinary.com/ddwet1dzj/image/upload/v1745722276/samples/pexels-photo-2030190_ewl2il.jpg",
+const backgroundImages = [
+    "https://res.cloudinary.com/ddwet1dzj/image/upload/v1745722276/samples/pexels-photo-2030190_ewl2il.jpg",
     "https://res.cloudinary.com/ddwet1dzj/image/upload/v1745722235/samples/industrial-firefighting-med-min.jpg_dllqbe.webp",
-    "https://res.cloudinary.com/ddwet1dzj/image/upload/v1745722267/samples/premium_photo-1661490162121-41df314e1ef1_va7yrq.jpg"]
+    "https://res.cloudinary.com/ddwet1dzj/image/upload/v1745722267/samples/premium_photo-1661490162121-41df314e1ef1_va7yrq.jpg",
+]
 
 export default function AdminLoginForm() {
-    const { isLoading, error, showPassword, setShowPassword, login} = useAuthStore()
+    const { isLoading, error, showPassword, setShowPassword, login } = useAuthStore()
     const router = useRouter()
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
@@ -38,8 +40,6 @@ export default function AdminLoginForm() {
             password: "",
         },
     })
-
-
 
     // Slideshow effect
     useEffect(() => {
@@ -90,18 +90,26 @@ export default function AdminLoginForm() {
                 <div className="absolute inset-0 bg-gradient-to-b from-[#8B4513]/40 to-black/40 z-20"></div>
             </div>
 
-            {/* Logo/Brand element */}
-            <div className="absolute top-30 left-1/2 transform -translate-x-1/2 z-10">
-                <div className="flex flex-col items-center justify-center gap-3">
-                    <div className="sm:w-24 sm:h-24 relative rounded-2xl">
-                        <Image src="https://res.cloudinary.com/ddwet1dzj/image/upload/v1745603414/samples/gE0ZW3qx_400x400_kyfgdz.jpg" alt="University of Ghana Fire Station Logo" fill className="object-cover rounded-2xl"  />
+            {/* Logo/Brand element - Improved responsiveness */}
+            <div className="absolute top-8 sm:top-16 left-1/2 transform -translate-x-1/2 z-30 w-full px-4">
+                <div className="flex flex-col items-center justify-center gap-2 sm:gap-3">
+                    <div className="w-16 h-16 sm:w-24 sm:h-24 relative rounded-2xl overflow-hidden shadow-lg">
+                        <Image
+                            src="https://res.cloudinary.com/ddwet1dzj/image/upload/v1745603414/samples/gE0ZW3qx_400x400_kyfgdz.jpg"
+                            alt="University of Ghana Fire Station Logo"
+                            fill
+                            className="object-cover"
+                        />
                     </div>
-                    <h1 className="text-white text-4xl font-bold text-center mt-2">University of Ghana Fire Station</h1>
+                    <h1 className="text-white text-xl sm:text-2xl md:text-4xl font-bold text-center mt-1 sm:mt-2 drop-shadow-md">
+                        University of Ghana Fire Station
+                    </h1>
                 </div>
             </div>
 
-            <Card className="w-full max-w-md relative z-10 border-none shadow-2xl bg-white rounded-xl overflow-hidden mt-64">
-                <div className="absolute top-0 left-0 w-full h-2 bg-red-600"></div>
+            {/* Login Card - Improved positioning and responsiveness */}
+            <Card className="w-full max-w-md relative z-30 border-none shadow-2xl bg-white/95 backdrop-blur-sm rounded-xl overflow-hidden mt-32 sm:mt-40 md:mt-48">
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-600 to-[#8B4513]"></div>
 
                 <CardHeader className="space-y-1 pb-2 pt-6">
                     <CardTitle className="text-2xl font-bold text-center text-[#8B4513]">Admin Login</CardTitle>
@@ -127,13 +135,13 @@ export default function AdminLoginForm() {
                                 Username
                             </Label>
                             <div className="relative group">
-                                <div className="absolute left-3 top-3 text-[#8B4513]">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8B4513]">
                                     <User className="h-4 w-4" />
                                 </div>
                                 <Input
                                     id="username"
                                     placeholder="Enter your username"
-                                    className={`pl-10 border-2 transition-all duration-200 focus-visible:ring-[#8B4513]/20 focus-visible:border-[#8B4513] ${
+                                    className={`pl-10 h-12 border-2 transition-all duration-200 focus-visible:ring-[#8B4513]/20 focus-visible:border-[#8B4513] ${
                                         errors.username
                                             ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200"
                                             : "border-gray-200"
@@ -154,14 +162,14 @@ export default function AdminLoginForm() {
                                 Password
                             </Label>
                             <div className="relative group">
-                                <div className="absolute left-3 top-3 text-[#8B4513]">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8B4513]">
                                     <Lock className="h-4 w-4" />
                                 </div>
                                 <Input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Enter your password"
-                                    className={`pl-10 pr-10 border-2 transition-all duration-200 focus-visible:ring-[#8B4513]/20 focus-visible:border-[#8B4513] ${
+                                    className={`pl-10 pr-10 h-12 border-2 transition-all duration-200 focus-visible:ring-[#8B4513]/20 focus-visible:border-[#8B4513] ${
                                         errors.password
                                             ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200"
                                             : "border-gray-200"
@@ -171,9 +179,10 @@ export default function AdminLoginForm() {
                                 />
                                 <button
                                     type="button"
-                                    className="absolute right-3 top-3 text-gray-400 hover:text-[#8B4513] transition-colors duration-200"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#8B4513] transition-colors duration-200"
                                     onClick={() => setShowPassword(!showPassword)}
                                     tabIndex={-1}
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
                                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                 </button>
@@ -190,7 +199,7 @@ export default function AdminLoginForm() {
                         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full">
                             <Button
                                 type="submit"
-                                className="w-full bg-gradient-to-r from-[#8B4513] to-red-700 hover:from-[#8B4513]/90 hover:to-red-700/90 text-white font-medium py-6 transition-all duration-300 shadow-md hover:shadow-lg"
+                                className="w-full bg-gradient-to-r from-[#8B4513] to-red-700 hover:from-[#8B4513]/90 hover:to-red-700/90 text-white font-medium h-12 transition-all duration-300 shadow-md hover:shadow-lg"
                                 disabled={isLoading}
                             >
                                 {isLoading ? (
@@ -232,9 +241,10 @@ export default function AdminLoginForm() {
                 </form>
             </Card>
 
-            {/* Footer */}
-            <div className="absolute bottom-4 left-0 w-full text-center text-white/70 text-xs">
-                © {new Date().getFullYear()} University of Ghana Fire Station
+            {/* Footer - Improved positioning */}
+            <div className="absolute bottom-4 left-0 w-full text-center text-white/80 text-xs z-30 px-4">
+                <p className="drop-shadow-md">© {new Date().getFullYear()} University of Ghana Fire Station</p>
+                <p className="mt-1 text-[10px] text-white/60">All rights reserved</p>
             </div>
         </div>
     )
