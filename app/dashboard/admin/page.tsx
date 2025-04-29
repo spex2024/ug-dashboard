@@ -100,16 +100,7 @@ export default function AdminPage() {
         })
     }
 
-    // Format date with time for display
-    const formatDateTime = (dateString: string): string => {
-        return new Date(dateString).toLocaleString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        })
-    }
+
 
     // Handle admin deletion
     const handleDeleteAdmin = async (adminId: string): Promise<void> => {
@@ -1272,19 +1263,6 @@ export default function AdminPage() {
                                         </div>
                                     </div>
 
-                                    <div className="space-y-1">
-                                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Last Login</p>
-                                        {currentAdmin.lastLogin ? (
-                                            <div className="flex items-center">
-                                                <Calendar className="h-4 w-4 mr-2 text-gray-400 dark:text-gray-500" />
-                                                <p className="text-base font-medium text-black dark:text-white">
-                                                    {formatDateTime(currentAdmin.lastLogin)}
-                                                </p>
-                                            </div>
-                                        ) : (
-                                            <p className="text-base text-gray-500 dark:text-gray-400">Never logged in</p>
-                                        )}
-                                    </div>
                                 </div>
                             </div>
                             <div className="flex justify-end mt-6 gap-2">

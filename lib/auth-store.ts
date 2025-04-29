@@ -42,11 +42,12 @@ const loadUserFromStorage = (): User | null => {
 }
 
 // Determine the API base URL based on the environment (production or development)
-const API_URL = process.env.NODE_ENV === 'production'
-    ? "https://ug-gnfs-backend.vercel.app/api/admin"  // Production URL
-    : "http://localhost:8080/api/admin";               // Local development URL
+const API_URL =
+    process.env.NODE_ENV === "production"
+        ? "https://ug-gnfs-backend.vercel.app/api/admin" // Production URL
+        : "http://localhost:8080/api/admin" // Local development URL
 
-export const useAuthStore = create<AuthState>((set, ) => ({
+export const useAuthStore = create<AuthState>((set) => ({
     user: loadUserFromStorage(),
     isLoading: false,
     error: "",
@@ -65,10 +66,14 @@ export const useAuthStore = create<AuthState>((set, ) => ({
         const loadingToast = toast.loading("Logging in...")
 
         try {
-            const response = await axios.post(`${API_URL}/login`, {
-                username,
-                password,
-            },{ withCredentials: true })
+            const response = await axios.post(
+                `${API_URL}/login`,
+                {
+                    username,
+                    password,
+                },
+                { withCredentials: true },
+            )
 
             const data = response.data
             const user = data.user || { id: "1", username, role: "admin" }
@@ -95,19 +100,36 @@ export const useAuthStore = create<AuthState>((set, ) => ({
 
     logout: async () => {
         set({ isLoading: true, error: "" })
+        const loadingToast = toast.loading("Logging out...")
 
         try {
-            await new Promise((resolve) => setTimeout(resolve, 25555500))
+            // Call the logout endpoint
+            await axios.post(
+                `${API_URL}/logout`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${getCookie("authToken")}`,
+                    },
+                    withCredentials: true,
+                },
+            )
 
+            // Clear local state and storage regardless of API response
             set({ user: null, isLoading: false, error: "" })
-            document.cookie = "authToken=; path=/; expires=Thu, 01 Jan 2050 00:00:00 GMT"
+            document.cookie = "authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
             localStorage.removeItem("authUser")
 
-            toast.success("Logged out successfully")
+            toast.success("Logged out successfully", { id: loadingToast })
         } catch (error) {
+            // Even if the API call fails, we should still clear local state
+            set({ user: null, isLoading: false })
+            document.cookie = "authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+            localStorage.removeItem("authUser")
+
             const errorMessage = error instanceof Error ? error.message : "An error occurred during logout"
-            set({ error: errorMessage, isLoading: false })
-            toast.error(errorMessage)
+            set({ error: errorMessage })
+            toast.error(`Logged out locally. Server error: ${errorMessage}`, { id: loadingToast })
         }
     },
 

@@ -92,7 +92,7 @@ function StaffTableComponent({
                                 <div className="flex flex-col items-center gap-2">
                                     <Users className="h-10 w-10 opacity-20" />
                                     <p>No staff members found matching your criteria</p>
-                                    <Button variant="link" size="sm" className="mt-2">
+                                    <Button variant="link" size="sm" className="mt-2 cursor-pointer">
                                         Clear filters
                                     </Button>
                                 </div>
@@ -102,7 +102,8 @@ function StaffTableComponent({
                         staffMembers.map((staff: Officer) => (
                             <TableRow
                                 key={staff._id}
-                                className="border-border hover:bg-[#8B4513]/5 dark:hover:bg-[#8B4513]/20 transition-colors"
+                                className="border-border hover:bg-[#8B4513]/5 dark:hover:bg-[#8B4513]/20 transition-colors cursor-pointer"
+                                onClick={() => onRowClick(staff)}
                             >
                                 <TableCell className="font-medium">{staff.serviceNumber || ""}</TableCell>
                                 <TableCell className="w-1/4">
@@ -166,8 +167,11 @@ function StaffTableComponent({
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-8 w-8 text-slate-600 hover:text-[#8B4513] hover:bg-[#8B4513]/10 dark:text-gray-400 dark:hover:text-[#8B4513]/80 dark:hover:bg-[#8B4513]/20"
-                                                        onClick={() => onRowClick(staff)}
+                                                        className="h-8 w-8 text-slate-600 hover:text-[#8B4513] hover:bg-[#8B4513]/10 dark:text-gray-400 dark:hover:text-[#8B4513]/80 dark:hover:bg-[#8B4513]/20 cursor-pointer"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            onRowClick(staff)
+                                                        }}
                                                     >
                                                         <User className="h-4 w-4" />
                                                     </Button>
@@ -182,7 +186,7 @@ function StaffTableComponent({
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-8 w-8 text-slate-600 hover:text-[#8B4513] hover:bg-[#8B4513]/10 dark:text-gray-400 dark:hover:text-[#8B4513]/80 dark:hover:bg-[#8B4513]/20"
+                                                        className="h-8 w-8 text-slate-600 hover:text-[#8B4513] hover:bg-[#8B4513]/10 dark:text-gray-400 dark:hover:text-[#8B4513]/80 dark:hover:bg-[#8B4513]/20 cursor-pointer"
                                                         onClick={(e) => {
                                                             e.stopPropagation()
                                                             onRowClick(staff, "edit")
@@ -201,7 +205,7 @@ function StaffTableComponent({
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-8 w-8 text-slate-600 hover:text-red-600 hover:bg-red-50 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-red-950/30"
+                                                        className="h-8 w-8 text-slate-600 hover:text-red-600 hover:bg-red-50 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-red-950/30 cursor-pointer"
                                                         onClick={(e) => {
                                                             e.stopPropagation()
                                                             onRowClick(staff, "delete")
@@ -354,27 +358,20 @@ function StaffDetailDialog({
                 {/* Tabs content */}
                 <div className="px-6 pb-6">
                     <Tabs defaultValue="personal" className="w-full">
-                        <TabsList className="mb-6 bg-muted dark:bg-gray-800 p-1 rounded-lg w-full grid grid-cols-3">
+                        <TabsList className="mb-6 bg-muted dark:bg-gray-800 p-1 rounded-lg w-full grid grid-cols-2">
                             <TabsTrigger
                                 value="personal"
-                                className="rounded-md data-[state=active]:bg-[#8B4513] data-[state=active]:text-white dark:data-[state=active]:bg-[#8B4513]/80 dark:data-[state=active]:text-white"
+                                className="rounded-md data-[state=active]:bg-[#8B4513] data-[state=active]:text-white dark:data-[state=active]:bg-[#8B4513]/80 dark:data-[state=active]:text-white cursor-pointer"
                             >
                                 <User className="h-4 w-4 mr-2" />
                                 Personal
                             </TabsTrigger>
                             <TabsTrigger
                                 value="employment"
-                                className="rounded-md data-[state=active]:bg-[#8B4513] data-[state=active]:text-white dark:data-[state=active]:bg-[#8B4513]/80 dark:data-[state=active]:text-white"
+                                className="rounded-md data-[state=active]:bg-[#8B4513] data-[state=active]:text-white dark:data-[state=active]:bg-[#8B4513]/80 dark:data-[state=active]:text-white cursor-pointer"
                             >
                                 <Briefcase className="h-4 w-4 mr-2" />
                                 Employment
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="financial"
-                                className="rounded-md data-[state=active]:bg-[#8B4513] data-[state=active]:text-white dark:data-[state=active]:bg-[#8B4513]/80 dark:data-[state=active]:text-white"
-                            >
-                                <CreditCard className="h-4 w-4 mr-2" />
-                                Financial
                             </TabsTrigger>
                         </TabsList>
 
@@ -484,32 +481,21 @@ function StaffDetailDialog({
                                 </div>
                             </div>
                         </TabsContent>
-
-                        <TabsContent value="financial" className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-1">
-                                    <p className="text-sm text-muted-foreground">Bank Name</p>
-                                    <p className="font-medium">{staff.bankName}</p>
-                                </div>
-
-                                <div className="space-y-1">
-                                    <p className="text-sm text-muted-foreground">Account Number</p>
-                                    <p className="font-medium">{staff.accountNumber}</p>
-                                </div>
-                            </div>
-                        </TabsContent>
                     </Tabs>
                 </div>
 
                 <DialogFooter className="bg-muted/30 dark:bg-gray-800 p-4 border-t border-[#8B4513]/10 dark:border-gray-700">
                     <div className="flex gap-2 w-full justify-between">
-                        <Button variant="outline" onClick={onClose} className="border-[#8B4513] text-[#8B4513]">
+                        <Button variant="outline" onClick={onClose} className="border-[#8B4513] text-[#8B4513] cursor-pointer">
                             Close
                         </Button>
                         <div className="flex gap-2">
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                    <Button variant="outline" className="border-[#8B4513] text-white hover:bg-[#DC143C]/10">
+                                    <Button
+                                        variant="outline"
+                                        className="border-[#8B4513] text-[#8B4513] dark:text-white hover:bg-[#DC143C]/10 cursor-pointer "
+                                    >
                                         <Trash2 className="h-4 w-4 mr-2" />
                                         Delete
                                     </Button>
@@ -523,14 +509,14 @@ function StaffDetailDialog({
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction className="bg-[#8B4513] text-white " onClick={onDelete}>
+                                        <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+                                        <AlertDialogAction className="bg-[#8B4513] text-white cursor-pointer" onClick={onDelete}>
                                             Delete
                                         </AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
-                            <Button onClick={onEdit} className="bg-[#8B4513] hover:bg-[#8B4513]/90 text-white">
+                            <Button onClick={onEdit} className="bg-[#8B4513] hover:bg-[#8B4513]/90 text-white cursor-pointer">
                                 <Edit className="h-4 w-4 mr-2" />
                                 Edit Profile
                             </Button>
@@ -621,21 +607,21 @@ function StaffEditDialog({
                         <TabsList className="mb-6 bg-muted dark:bg-gray-800 p-1 rounded-lg w-full">
                             <TabsTrigger
                                 value="personal"
-                                className="rounded-md data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-white"
+                                className="rounded-md data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-white cursor-pointer"
                             >
                                 <User className="h-4 w-4 mr-2" />
                                 Personal
                             </TabsTrigger>
                             <TabsTrigger
                                 value="employment"
-                                className="rounded-md data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-white"
+                                className="rounded-md data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-white cursor-pointer"
                             >
                                 <Briefcase className="h-4 w-4 mr-2" />
                                 Employment
                             </TabsTrigger>
                             <TabsTrigger
                                 value="financial"
-                                className="rounded-md data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-white"
+                                className="rounded-md data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-white cursor-pointer"
                             >
                                 <CreditCard className="h-4 w-4 mr-2" />
                                 Financial
@@ -668,6 +654,7 @@ function StaffEditDialog({
                                         value={formData.dob ? formData.dob.split("T")[0] : ""}
                                         onChange={handleChange}
                                         required
+                                        className="cursor-pointer"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -692,12 +679,16 @@ function StaffEditDialog({
                                         className="flex space-x-4"
                                     >
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="Male" id="male" />
-                                            <Label htmlFor="male">Male</Label>
+                                            <RadioGroupItem value="Male" id="male" className="cursor-pointer" />
+                                            <Label htmlFor="male" className="cursor-pointer">
+                                                Male
+                                            </Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="Female" id="female" />
-                                            <Label htmlFor="female">Female</Label>
+                                            <RadioGroupItem value="Female" id="female" className="cursor-pointer" />
+                                            <Label htmlFor="female" className="cursor-pointer">
+                                                Female
+                                            </Label>
                                         </div>
                                     </RadioGroup>
                                 </div>
@@ -713,14 +704,22 @@ function StaffEditDialog({
                                             }))
                                         }
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger className="cursor-pointer">
                                             <SelectValue placeholder="Select marital status" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Single">Single</SelectItem>
-                                            <SelectItem value="Married">Married</SelectItem>
-                                            <SelectItem value="Divorced">Divorced</SelectItem>
-                                            <SelectItem value="Widowed">Widowed</SelectItem>
+                                            <SelectItem value="Single" className="cursor-pointer">
+                                                Single
+                                            </SelectItem>
+                                            <SelectItem value="Married" className="cursor-pointer">
+                                                Married
+                                            </SelectItem>
+                                            <SelectItem value="Divorced" className="cursor-pointer">
+                                                Divorced
+                                            </SelectItem>
+                                            <SelectItem value="Widowed" className="cursor-pointer">
+                                                Widowed
+                                            </SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -752,7 +751,14 @@ function StaffEditDialog({
 
                             <div className="space-y-2">
                                 <Label htmlFor="address">Residential Address</Label>
-                                <Textarea id="address" name="address" value={formData.address} onChange={handleChange} required />
+                                <Textarea
+                                    id="address"
+                                    name="address"
+                                    value={formData.address}
+                                    onChange={handleChange}
+                                    required
+                                    className="cursor-pointer"
+                                />
                             </div>
                         </TabsContent>
 
@@ -798,6 +804,7 @@ function StaffEditDialog({
                                         value={formData.appointmentDate ? formData.appointmentDate.split("T")[0] : ""}
                                         onChange={handleChange}
                                         required
+                                        className="cursor-pointer"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -839,7 +846,9 @@ function StaffEditDialog({
                     </Tabs>
 
                     <DialogFooter>
-                        <Button type="submit">Save Changes</Button>
+                        <Button type="submit" className="cursor-pointer">
+                            Save Changes
+                        </Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
@@ -875,9 +884,9 @@ function DeleteConfirmDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
                     <AlertDialogAction
-                        className="bg-[#DC143C] dark:bg-[#DC143C]/80 dark:hover:bg-[#DC143C] text-white"
+                        className="bg-[#DC143C] dark:bg-[#DC143C]/80 dark:hover:bg-[#DC143C] text-white cursor-pointer"
                         onClick={() => onConfirm(staff)}
                     >
                         Delete
@@ -893,6 +902,120 @@ export default function StaffTable() {
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedRank, setSelectedRank] = useState("all")
     const [activeTab, setActiveTab] = useState("all")
+
+    // Function to export data to Excel
+    const exportToExcel = () => {
+        // Create a CSV string with all staff details
+        const headers = [
+            // Personal Information
+            "Service Number",
+            "First Name",
+            "Middle Name",
+            "Last Name",
+            "Date of Birth",
+            "Age",
+            "Gender",
+            "Marital Status",
+            "National ID",
+            "Emergency Contact",
+            "Residential Address",
+            "Email",
+            "Phone Number",
+            // Employment Information
+            "Staff ID",
+            "Rank",
+            "Full Rank Name",
+            "Level Officer",
+            "Appointment Date",
+            "Years of Service",
+            "Mate Type",
+            "Qualification",
+            // Financial Information
+            "Bank Name",
+            "Account Number",
+        ]
+
+        let csvContent = headers.join(",") + "\n"
+
+        filteredStaff.forEach((staff) => {
+            // Calculate age
+            const calculateAge = () => {
+                if (!staff.dob) return ""
+                const birthDate = new Date(staff.dob)
+                const today = new Date()
+                let age = today.getFullYear() - birthDate.getFullYear()
+                const months = today.getMonth() - birthDate.getMonth()
+                if (months < 0 || (months === 0 && today.getDate() < birthDate.getDate())) {
+                    age--
+                }
+                return age.toString()
+            }
+
+            // Calculate years of service
+            const calculateYearsOfService = () => {
+                if (!staff.appointmentDate) return ""
+                const appointmentDate = new Date(staff.appointmentDate)
+                const today = new Date()
+                let years = today.getFullYear() - appointmentDate.getFullYear()
+                const months = today.getMonth() - appointmentDate.getMonth()
+                if (months < 0 || (months === 0 && today.getDate() < appointmentDate.getDate())) {
+                    years--
+                }
+                return years.toString()
+            }
+
+            const row = [
+                // Personal Information
+                staff.serviceNumber || "",
+                staff.firstName || "",
+                staff.middleName || "",
+                staff.lastName || "",
+                staff.dob ? new Date(staff.dob).toLocaleDateString() : "",
+                calculateAge(),
+                staff.gender || "",
+                staff.maritalStatus || "",
+                staff.nationalId || "",
+                staff.emergencyContact || "",
+                staff.address || "",
+                staff.email || "",
+                staff.phoneNumber || "",
+                // Employment Information
+                staff.staffId || "",
+                staff.rank || "",
+                staff.rank ? getFullRankName(staff.rank) : "",
+                staff.levelOfficer || "",
+                staff.appointmentDate ? new Date(staff.appointmentDate).toLocaleDateString() : "",
+                calculateYearsOfService(),
+                staff.mateType || "",
+                staff.qualification || "",
+                // Financial Information
+                staff.bankName || "",
+                staff.accountNumber || "",
+            ]
+
+            // Escape commas in fields
+            const escapedRow = row.map((field) => {
+                // If field contains comma, quote, or newline, wrap in quotes
+                if (field.includes(",") || field.includes('"') || field.includes("\n")) {
+                    return `"${field.replace(/"/g, '""')}"`
+                }
+                return field
+            })
+
+            csvContent += escapedRow.join(",") + "\n"
+        })
+
+        // Create a Blob and download link
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.setAttribute("href", url)
+        link.setAttribute("download", "staff_complete_data.csv")
+        link.style.visibility = "hidden"
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
 
     // Use the officer store instead of mock data
     const { officers, fetchOfficers, updateOfficer, deleteOfficer } = useOfficerStore()
@@ -1021,7 +1144,7 @@ export default function StaffTable() {
                         <Input
                             type="search"
                             placeholder="Search by name, ID, email..."
-                            className="pl-9 w-full bg-background border-[#8B4513]/20 focus-visible:ring-[#8B4513]/30"
+                            className="pl-9 w-full bg-background border-[#8B4513]/20 focus-visible:ring-[#8B4513]/30 cursor-text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -1029,20 +1152,22 @@ export default function StaffTable() {
                     </div>
 
                     <Select value={selectedRank} onValueChange={setSelectedRank}>
-                        <SelectTrigger className="w-[180px] border-[#8B4513]/20 focus:ring-[#8B4513]/30">
+                        <SelectTrigger className="w-[180px] border-[#8B4513]/20 focus:ring-[#8B4513]/30 cursor-pointer">
                             <SelectValue placeholder="Filter by rank" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All Ranks</SelectItem>
+                            <SelectItem value="all" className="cursor-pointer">
+                                All Ranks
+                            </SelectItem>
                             <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Junior Officers</div>
                             {Object.keys(JuniorOfficerRank).map((rank) => (
-                                <SelectItem key={rank} value={rank}>
+                                <SelectItem key={rank} value={rank} className="cursor-pointer">
                                     {rank}
                                 </SelectItem>
                             ))}
                             <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground mt-2">Senior Officers</div>
                             {Object.keys(SeniorOfficerRank).map((rank) => (
-                                <SelectItem key={rank} value={rank}>
+                                <SelectItem key={rank} value={rank} className="cursor-pointer">
                                     {rank}
                                 </SelectItem>
                             ))}
@@ -1051,7 +1176,8 @@ export default function StaffTable() {
 
                     <Button
                         variant="outline"
-                        className="border-[#8B4513]/20 text-[#8B4513] hover:bg-[#8B4513]/10 hover:text-[#8B4513] hover:border-[#8B4513]/30 dark:text-gray-400"
+                        className="border-[#8B4513]/20 text-[#8B4513] hover:bg-[#8B4513]/10 hover:text-[#8B4513] hover:border-[#8B4513]/30 dark:text-gray-400 cursor-pointer"
+                        onClick={exportToExcel}
                     >
                         <Download className="h-4 w-4 mr-2" />
                         Export
@@ -1063,19 +1189,19 @@ export default function StaffTable() {
                 <TabsList className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-950 duration-300 p-1 border border-[#8B4513]/10 rounded-lg">
                     <TabsTrigger
                         value="all"
-                        className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white rounded-md"
+                        className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white rounded-md cursor-pointer"
                     >
                         All
                     </TabsTrigger>
                     <TabsTrigger
                         value="junior"
-                        className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white rounded-md"
+                        className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white rounded-md cursor-pointer"
                     >
                         Junior Officers
                     </TabsTrigger>
                     <TabsTrigger
                         value="senior"
-                        className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white rounded-md"
+                        className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white rounded-md cursor-pointer"
                     >
                         Senior Officers
                     </TabsTrigger>
