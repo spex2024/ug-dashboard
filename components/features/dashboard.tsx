@@ -472,10 +472,9 @@ export default function Dashboard() {
                                     <thead>
                                     <tr className="border-b border-gray-200 dark:border-gray-700">
                                         <th className="text-left p-4 text-xs font-medium text-gray-500 dark:text-gray-400">Name</th>
-                                        <th className="text-left p-4 text-xs font-medium text-gray-500 dark:text-gray-400">
-                                            Service No.
-                                        </th>
+                                        <th className="text-left p-4 text-xs font-medium text-gray-500 dark:text-gray-400">Rank</th>
                                         <th className="text-left p-4 text-xs font-medium text-gray-500 dark:text-gray-400">Rank Level</th>
+                                        <th className="text-left p-4 text-xs font-medium text-gray-500 dark:text-gray-400">Department</th>
                                         <th className="text-left p-4 text-xs font-medium text-gray-500 dark:text-gray-400">Contact</th>
                                         <th className="text-left p-4 text-xs font-medium text-gray-500 dark:text-gray-400">
                                             Intake/Course
@@ -510,7 +509,7 @@ export default function Dashboard() {
                             </span>
                                                 </div>
                                             </td>
-                                            <td className="p-4 text-sm text-gray-700 dark:text-gray-300">{record.serviceNumber}</td>
+                                            <td className="p-4 text-sm text-gray-700 dark:text-gray-300">{record.rank}</td>
                                             <td className="p-4">
                                                 <Badge
                                                     className={`${getRankBadgeColor(record.rank)} text-xs font-semibold px-2 py-0.5`}
@@ -519,6 +518,7 @@ export default function Dashboard() {
                                                     {record.levelOfficer || "N/A"}
                                                 </Badge>
                                             </td>
+                                            <td className="p-4 text-sm text-gray-700 dark:text-gray-300">{record.department}</td>
                                             <td className="p-4 text-sm text-gray-700 dark:text-gray-300">{record.phoneNumber || "N/A"}</td>
                                             <td className="p-4 text-sm text-gray-700 dark:text-gray-300">
                                                 {record.mateType || "N/A"}

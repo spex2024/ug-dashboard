@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { Mail, Phone, Edit, Trash2, User, Briefcase, CreditCard, Shield, Users, Download } from "lucide-react"
+import toast, { Toaster } from "react-hot-toast"
 
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -43,6 +44,21 @@ import { JuniorOfficerRank, SeniorOfficerRank, getFullRankName } from "@/lib/off
 import type { Officer } from "@/lib/officer"
 import { useOfficerStore } from "@/lib/officer"
 
+// Define departments array
+const departments = [
+    "Operations",
+    "Watch Room",
+    "Safety",
+    "Admin",
+    "Investigation",
+    "Welfare",
+    "Accounts",
+    "Statistics",
+    "Stores",
+    "Training",
+    "IT",
+] as const
+
 // Define colors
 const colors = {
     brown: "#8B4513", // Saddle Brown
@@ -80,6 +96,7 @@ function StaffTableComponent({
                         <TableHead className="font-semibold text-inherit w-1/4">Staff</TableHead>
                         <TableHead className="font-semibold text-inherit">Gender</TableHead>
                         <TableHead className="font-semibold text-inherit">Rank</TableHead>
+                        <TableHead className="font-semibold text-inherit">Department</TableHead>
                         <TableHead className="font-semibold text-inherit">Appointment Date</TableHead>
                         <TableHead className="font-semibold text-inherit">Contact</TableHead>
                         <TableHead className="text-right font-semibold text-inherit">Actions</TableHead>
@@ -140,6 +157,14 @@ function StaffTableComponent({
                                         <span className="font-medium">{staff.rank}</span>
                                         <span className="text-xs text-muted-foreground">{getFullRankName(staff.rank)}</span>
                                     </div>
+                                </TableCell>
+                                <TableCell>
+                                    <Badge
+                                        variant="outline"
+                                        className="bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800"
+                                    >
+                                        {staff.department || "N/A"}
+                                    </Badge>
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center">
@@ -282,7 +307,7 @@ function StaffDetailDialog({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[900px] p-0 overflow-hidden border-[#8B4513]/20 max-h-[90vh] bg-white dark:bg-gray-900 [button[aria-label='Close']]:hidden">
+            <DialogContent className="sm:max-w-[900px] p-0 overflow-hidden border-[#8B4513]/20 max-h-[90vh] w-[95vw] bg-white dark:bg-gray-900 [button[aria-label='Close']]:hidden">
                 {/* Header with background and profile info */}
                 <DialogHeader className="px-6 pt-6 pb-0 border-b border-[#8B4513]/10 dark:border-gray-700">
                     <div className="absolute inset-0 bg-gradient-to-b from-[#8B4513]/20 to-transparent h-32 rounded-t-lg dark:from-[#8B4513]/30 dark:to-transparent" />
@@ -294,7 +319,7 @@ function StaffDetailDialog({
                         </DialogDescription>
 
                         {/* Entire Row */}
-                        <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-6">
+                        <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8 mb-6">
                             {/* Avatar */}
                             <div className="flex-shrink-0">
                                 <Avatar className="h-20 w-20 border-[#8B4513] border-2 shadow-sm">
@@ -322,7 +347,7 @@ function StaffDetailDialog({
                             </div>
 
                             {/* Stats */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 ml-auto">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 ml-0 md:ml-auto mt-4 md:mt-0">
                                 {/* Years of Service */}
                                 <div className="flex flex-col items-center text-center w-20">
                                     <Shield className="h-6 w-6 mb-1 text-[#8B4513] dark:text-[#8B4513]/80" />
@@ -461,6 +486,11 @@ function StaffDetailDialog({
                                 </div>
 
                                 <div className="space-y-1">
+                                    <p className="text-sm text-muted-foreground">Department</p>
+                                    <p className="font-medium">{staff.department || "N/A"}</p>
+                                </div>
+
+                                <div className="space-y-1">
                                     <p className="text-sm text-muted-foreground">Appointment Date</p>
                                     <p className="font-medium">{formatDate(staff.appointmentDate)}</p>
                                 </div>
@@ -494,7 +524,7 @@ function StaffDetailDialog({
                                 <AlertDialogTrigger asChild>
                                     <Button
                                         variant="outline"
-                                        className="border-[#8B4513] text-[#8B4513] dark:text-white hover:bg-[#DC143C]/10 cursor-pointer "
+                                        className="border-[#8B4513] text-white hover:bg-[#DC143C]/10 cursor-pointer"
                                     >
                                         <Trash2 className="h-4 w-4 mr-2" />
                                         Delete
@@ -563,21 +593,28 @@ function StaffEditDialog({
         appointmentDate: "",
         mateType: "",
         qualification: "",
+        department: "",
         bankName: "",
         accountNumber: "",
     }
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [formData, setFormData] = useState<Officer>(staff ? { ...staff } : initialFormData)
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [customQualification, setCustomQualification] = useState<string>("")
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
         if (staff) {
             setFormData({ ...staff })
+            if (staff.qualification === "Others") {
+                setCustomQualification(staff.customQualification || "")
+            }
         } else {
             setFormData(initialFormData)
+            setCustomQualification("")
         }
-    }, [staff])
+    }, [staff, staff?.qualification, staff?.customQualification])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
@@ -587,14 +624,27 @@ function StaffEditDialog({
         }))
     }
 
+    const handleSelectChange = (name: string, value: string) => {
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }))
+    }
+
     const handleSubmit = (e: { preventDefault: () => void }) => {
         e.preventDefault()
+
+        // If qualification is "Others", include the custom qualification
+        if (formData.qualification === "Others") {
+            formData.customQualification = customQualification
+        }
+
         onSave(formData)
     }
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-900">
+            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto w-[95vw] bg-white dark:bg-gray-900">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold">Edit Staff Profile</DialogTitle>
                     <DialogDescription>
@@ -618,13 +668,6 @@ function StaffEditDialog({
                             >
                                 <Briefcase className="h-4 w-4 mr-2" />
                                 Employment
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="financial"
-                                className="rounded-md data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-white cursor-pointer"
-                            >
-                                <CreditCard className="h-4 w-4 mr-2" />
-                                Financial
                             </TabsTrigger>
                         </TabsList>
 
@@ -779,21 +822,134 @@ function StaffEditDialog({
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="rank">Rank</Label>
-                                    <Input id="rank" name="rank" value={formData.rank} onChange={handleChange} required />
+                                    <Label htmlFor="department">Department</Label>
+                                    <Select
+                                        name="department"
+                                        value={formData.department || ""}
+                                        onValueChange={(value) => handleSelectChange("department", value)}
+                                    >
+                                        <SelectTrigger className="cursor-pointer">
+                                            <SelectValue placeholder="Select department" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {departments.map((dept) => (
+                                                <SelectItem key={dept} value={dept} className="cursor-pointer">
+                                                    {dept}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="levelOfficer">Level</Label>
-                                    <Input
-                                        id="levelOfficer"
+                                    <Select
                                         name="levelOfficer"
-                                        value={formData.levelOfficer}
-                                        onChange={handleChange}
-                                        required
-                                    />
+                                        value={formData.levelOfficer || ""}
+                                        onValueChange={(value) => handleSelectChange("levelOfficer", value)}
+                                    >
+                                        <SelectTrigger className="cursor-pointer">
+                                            <SelectValue placeholder="Select level" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Junior Officer" className="cursor-pointer">
+                                                Junior Officer
+                                            </SelectItem>
+                                            <SelectItem value="Senior Officer" className="cursor-pointer">
+                                                Senior Officer
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="rank">Rank</Label>
+                                    <Select
+                                        name="rank"
+                                        value={formData.rank || ""}
+                                        onValueChange={(value) => handleSelectChange("rank", value)}
+                                    >
+                                        <SelectTrigger className="cursor-pointer">
+                                            <SelectValue placeholder="Select rank" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {formData.levelOfficer === "Senior Officer" ? (
+                                                <>
+                                                    <SelectItem value="DCFO" className="cursor-pointer">
+                                                        DCFO
+                                                    </SelectItem>
+                                                    <SelectItem value="AFCO I" className="cursor-pointer">
+                                                        AFCO I
+                                                    </SelectItem>
+                                                    <SelectItem value="AFCO II" className="cursor-pointer">
+                                                        AFCO II
+                                                    </SelectItem>
+                                                    <SelectItem value="DO I" className="cursor-pointer">
+                                                        DO I
+                                                    </SelectItem>
+                                                    <SelectItem value="DO II" className="cursor-pointer">
+                                                        DO II
+                                                    </SelectItem>
+                                                    <SelectItem value="DO III" className="cursor-pointer">
+                                                        DO III
+                                                    </SelectItem>
+                                                    <SelectItem value="ADO I" className="cursor-pointer">
+                                                        ADO I
+                                                    </SelectItem>
+                                                    <SelectItem value="ADO II" className="cursor-pointer">
+                                                        ADO II
+                                                    </SelectItem>
+                                                </>
+                                            ) : formData.levelOfficer === "Junior Officer" ? (
+                                                <>
+                                                    <SelectItem value="RFW" className="cursor-pointer">
+                                                        RFW
+                                                    </SelectItem>
+                                                    <SelectItem value="RFM" className="cursor-pointer">
+                                                        RFM
+                                                    </SelectItem>
+                                                    <SelectItem value="FM" className="cursor-pointer">
+                                                        FM
+                                                    </SelectItem>
+                                                    <SelectItem value="FW" className="cursor-pointer">
+                                                        FW
+                                                    </SelectItem>
+                                                    <SelectItem value="LFM" className="cursor-pointer">
+                                                        LFM
+                                                    </SelectItem>
+                                                    <SelectItem value="LFW" className="cursor-pointer">
+                                                        LFW
+                                                    </SelectItem>
+                                                    <SelectItem value="SUB" className="cursor-pointer">
+                                                        SUB
+                                                    </SelectItem>
+                                                    <SelectItem value="ASTNO" className="cursor-pointer">
+                                                        ASTNO
+                                                    </SelectItem>
+                                                    <SelectItem value="AGO" className="cursor-pointer">
+                                                        AGO
+                                                    </SelectItem>
+                                                    <SelectItem value="STNO II" className="cursor-pointer">
+                                                        STNO II
+                                                    </SelectItem>
+                                                    <SelectItem value="STNO I" className="cursor-pointer">
+                                                        STNO I
+                                                    </SelectItem>
+                                                    <SelectItem value="DGO" className="cursor-pointer">
+                                                        DGO
+                                                    </SelectItem>
+                                                    <SelectItem value="GO" className="cursor-pointer">
+                                                        GO
+                                                    </SelectItem>
+                                                </>
+                                            ) : (
+                                                <SelectItem value="" disabled className="cursor-pointer">
+                                                    Select a level first
+                                                </SelectItem>
+                                            )}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="appointmentDate">Appointment Date</Label>
@@ -807,39 +963,64 @@ function StaffEditDialog({
                                         className="cursor-pointer"
                                     />
                                 </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="mateType">Mate Type</Label>
                                     <Input id="mateType" name="mateType" value={formData.mateType} onChange={handleChange} required />
                                 </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="qualification">Qualification</Label>
-                                <Input
-                                    id="qualification"
-                                    name="qualification"
-                                    value={formData.qualification}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                        </TabsContent>
-
-                        <TabsContent value="financial" className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="bankName">Bank Name</Label>
-                                    <Input id="bankName" name="bankName" value={formData.bankName} onChange={handleChange} required />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="accountNumber">Account Number</Label>
-                                    <Input
-                                        id="accountNumber"
-                                        name="accountNumber"
-                                        value={formData.accountNumber}
-                                        onChange={handleChange}
-                                        required
-                                    />
+                                    <Label htmlFor="qualification">Qualification</Label>
+                                    <Select
+                                        name="qualification"
+                                        value={formData.qualification || ""}
+                                        onValueChange={(value) => handleSelectChange("qualification", value)}
+                                    >
+                                        <SelectTrigger className="cursor-pointer">
+                                            <SelectValue placeholder="Select qualification" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="JHS" className="cursor-pointer">
+                                                JHS
+                                            </SelectItem>
+                                            <SelectItem value="SHS" className="cursor-pointer">
+                                                SHS
+                                            </SelectItem>
+                                            <SelectItem value="DBS" className="cursor-pointer">
+                                                DBS
+                                            </SelectItem>
+                                            <SelectItem value="Diploma" className="cursor-pointer">
+                                                Diploma
+                                            </SelectItem>
+                                            <SelectItem value="NVTI" className="cursor-pointer">
+                                                NVTI
+                                            </SelectItem>
+                                            <SelectItem value="Professional Certificate" className="cursor-pointer">
+                                                Professional Certificate
+                                            </SelectItem>
+                                            <SelectItem value="HND" className="cursor-pointer">
+                                                HND
+                                            </SelectItem>
+                                            <SelectItem value="Degree" className="cursor-pointer">
+                                                Degree
+                                            </SelectItem>
+                                            <SelectItem value="Masters" className="cursor-pointer">
+                                                Masters
+                                            </SelectItem>
+                                            <SelectItem value="Others" className="cursor-pointer">
+                                                Others
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    {formData.qualification === "Others" && (
+                                        <Input
+                                            placeholder="Enter your qualification"
+                                            value={customQualification}
+                                            onChange={(e) => setCustomQualification(e.target.value)}
+                                            className="mt-2 border-slate-300 rounded-md focus:border-[#8B4513] focus:ring focus:ring-[#8B4513]/20 focus:ring-opacity-50 transition-all"
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </TabsContent>
@@ -926,6 +1107,7 @@ export default function StaffTable() {
             "Rank",
             "Full Rank Name",
             "Level Officer",
+            "Department",
             "Appointment Date",
             "Years of Service",
             "Mate Type",
@@ -984,6 +1166,7 @@ export default function StaffTable() {
                 staff.rank || "",
                 staff.rank ? getFullRankName(staff.rank) : "",
                 staff.levelOfficer || "",
+                staff.department || "",
                 staff.appointmentDate ? new Date(staff.appointmentDate).toLocaleDateString() : "",
                 calculateYearsOfService(),
                 staff.mateType || "",
@@ -1061,23 +1244,84 @@ export default function StaffTable() {
         setDialogAction(action)
     }
 
-    const handleDialogClose = () => {
-        setDialogAction(null)
-    }
-
     // Handle edit staff
-    const handleEditStaff = (updatedStaff: Officer) => {
+    const handleEditStaff = async (updatedStaff: Officer) => {
         if (updatedStaff._id) {
-            updateOfficer(updatedStaff._id, updatedStaff)
-            setDialogAction("view")
+            try {
+                const response = await updateOfficer(updatedStaff._id, updatedStaff)
+                setDialogAction("view")
+                toast.success(
+                    response?.message ||
+                    `${updatedStaff.firstName} ${updatedStaff.lastName}'s profile has been updated successfully.`,
+                    {
+                        duration: 3000,
+                        position: "top-right",
+                        style: {
+                            background: "#8B4513",
+                            color: "#fff",
+                        },
+                        iconTheme: {
+                            primary: "#fff",
+                            secondary: "#8B4513",
+                        },
+                    },
+                )
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : "An error occurred while updating the profile"
+
+                toast.error(errorMessage, {
+                    duration: 3000,
+                    position: "top-right",
+                    style: {
+                        background: "#DC143C",
+                        color: "#fff",
+                    },
+                    iconTheme: {
+                        primary: "#fff",
+                        secondary: "#DC143C",
+                    },
+                })
+            }
         }
     }
 
     // Handle delete staff
-    const handleDeleteStaff = (staffToDelete: Officer) => {
+    const handleDeleteStaff = async (staffToDelete: Officer) => {
         if (staffToDelete._id) {
-            deleteOfficer(staffToDelete._id)
-            setDialogAction(null)
+            try {
+                const response = await deleteOfficer(staffToDelete._id)
+                setDialogAction(null)
+                toast.success(
+                    response?.message || `${staffToDelete.firstName} ${staffToDelete.lastName}'s profile has been deleted.`,
+                    {
+                        duration: 3000,
+                        position: "top-right",
+                        style: {
+                            background: "#DC143C",
+                            color: "#fff",
+                        },
+                        iconTheme: {
+                            primary: "#fff",
+                            secondary: "#DC143C",
+                        },
+                    },
+                )
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : "An error occurred while deleting the profile"
+
+                toast.error(errorMessage, {
+                    duration: 3000,
+                    position: "top-right",
+                    style: {
+                        background: "#DC143C",
+                        color: "#fff",
+                    },
+                    iconTheme: {
+                        primary: "#fff",
+                        secondary: "#DC143C",
+                    },
+                })
+            }
         }
     }
 
@@ -1116,6 +1360,10 @@ export default function StaffTable() {
 
         return searchMatch && rankMatch && levelMatch
     })
+
+    const handleDialogClose = () => {
+        setDialogAction(null)
+    }
 
     return (
         <div className="p-6 space-y-6 dark:bg-transparent transition-all duration-300 min-h-screen shadow-none">
@@ -1250,6 +1498,7 @@ export default function StaffTable() {
                 onClose={handleDialogClose}
                 onConfirm={handleDeleteStaff}
             />
+            <Toaster />
         </div>
     )
 }

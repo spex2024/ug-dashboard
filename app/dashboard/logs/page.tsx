@@ -69,20 +69,7 @@ export default function LogsPage() {
         return searchMatch && typeMatch && dateMatch
     })
 
-    const getTypeIcon = (type: string) => {
-        switch (type) {
-            case "auth":
-                return <User className="h-4 w-4 text-[#8B4513] dark:text-gray-300" />
-            case "admin":
-                return <ShieldCheck className="h-4 w-4 text-[#8B4513] dark:text-gray-300" />
-            case "data":
-                return <FileText className="h-4 w-4 text-[#8B4513] dark:text-gray-300" />
-            case "system":
-                return <Clock className="h-4 w-4 text-[#8B4513] dark:text-gray-300" />
-            default:
-                return null
-        }
-    }
+
 
     const getActionBadge = (type: string) => {
         switch (type) {
