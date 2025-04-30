@@ -38,15 +38,14 @@ export type OfficerStore = {
     deleteOfficer: (id: string) => Promise<{ message: string } | undefined>
 }
 
+
+
+
 const API_URL =
     process.env.NODE_ENV === "production"
         ? "https://ug-gnfs-backend.vercel.app" // Production URL
         : "http://localhost:8080" // Local development URL
 
-const api = axios.create({
-    baseURL: API_URL,
-    withCredentials: true,
-})
 
 // Helper: cookie parser
 const getCookie = (name: string): string | null => {
@@ -56,6 +55,15 @@ const getCookie = (name: string): string | null => {
     if (parts.length === 2) return parts.pop()?.split(";").shift() || null
     return null
 }
+
+
+const api = axios.create({
+    baseURL: API_URL,
+    withCredentials: true,
+    headers: {
+        Authorization: `Bearer ${getCookie("authToken")}`,
+    }
+})
 
 export const useOfficerStore = create<OfficerStore>((set, get) => ({
     officers: [],
