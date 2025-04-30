@@ -75,7 +75,9 @@ const useAdminStore = create<AdminStoreState>((set) => ({
     // Update admin
     updateAdmin: async (id: string, updatedData: Record<string, unknown>) => {
         try {
-            const res = await axios.put(`${API}/update/${id}`, updatedData, { withCredentials: true })
+            const res = await axios.put(`${API}/update/${id}`, updatedData, { withCredentials: true ,  headers: {
+                    Authorization: `Bearer ${getCookie("authToken")}`,
+                } })
             set((state) => ({
                 admins: state.admins.map((admin) => (admin._id === id ? res.data.admin : admin)),
             }))
