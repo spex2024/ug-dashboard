@@ -24,6 +24,7 @@ export type Officer = {
     address?: string
     phoneNumber?: string
     emergencyContact?: string
+    emergencyContactName?: string
     customQualification?: string
     [key: string]: unknown
 }

@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { Mail, Phone, Edit, Trash2, User, Briefcase, CreditCard, Shield, Users, Download } from "lucide-react"
-import toast, { Toaster } from "react-hot-toast"
+import { Toaster } from "react-hot-toast"
 
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -43,6 +43,7 @@ import { JuniorOfficerRank, SeniorOfficerRank, getFullRankName } from "@/lib/off
 // Import Officer type and store
 import type { Officer } from "@/lib/officer"
 import { useOfficerStore } from "@/lib/officer"
+import toast from "react-hot-toast"
 
 // Define departments array
 const departments = [
@@ -126,7 +127,7 @@ function StaffTableComponent({
                                 <TableCell className="w-1/4">
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-10 w-10 border-2 border-[#8B4513]/20 dark:border-gray-400 shadow-sm">
-                                            <AvatarImage src="/placeholder.svg" alt={`${staff.firstName || ""} ${staff.lastName || ""}`} />
+                                            <AvatarImage src="/placeholder.svg" alt={`${staff.firstName || ""} ${staff.lastName} || ""}`} />
                                             <AvatarFallback className="bg-gradient-to-br from-[#8B4513]/20 to-[#8B4513]/10 text-[#8B4513] dark:from-gray-900 dark:to-gray-950 dark:text-gray-400">
                                                 {staff.firstName ? staff.firstName.charAt(0) : ""}
                                                 {staff.lastName ? staff.lastName.charAt(0) : ""}
@@ -433,6 +434,11 @@ function StaffDetailDialog({
                                     <p className="text-sm text-muted-foreground">Emergency Contact</p>
                                     <p className="font-medium">{staff.emergencyContact}</p>
                                 </div>
+
+                                <div className="space-y-1">
+                                    <p className="text-sm text-muted-foreground">Emergency Contact Name</p>
+                                    <p className="font-medium">{staff.emergencyContactName || "N/A"}</p>
+                                </div>
                             </div>
 
                             <Separator className="bg-[#8B4513]/10" />
@@ -584,6 +590,8 @@ function StaffEditDialog({
         maritalStatus: "",
         nationalId: "",
         emergencyContact: "",
+        emergencyContactName: "", // Added emergencyContactName
+        emergencyContactNumber: "", // Added emergencyContactNumber
         address: "",
         email: "",
         phoneNumber: "",
@@ -748,7 +756,7 @@ function StaffEditDialog({
                                         }
                                     >
                                         <SelectTrigger className="cursor-pointer">
-                                            <SelectValue placeholder="Select marital status" />
+                                            <SelectValue placeholder="Select" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="Single" className="cursor-pointer">
@@ -781,7 +789,17 @@ function StaffEditDialog({
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="emergencyContact">Emergency Contact</Label>
+                                    <Label htmlFor="emergencyContactName">Emergency Contact Name</Label>
+                                    <Input
+                                        id="emergencyContactName"
+                                        name="emergencyContactName"
+                                        value={formData.emergencyContactName || ""}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="emergencyContact">Emergency Contact Number</Label>
                                     <Input
                                         id="emergencyContact"
                                         name="emergencyContact"
@@ -1098,6 +1116,7 @@ export default function StaffTable() {
             "Gender",
             "Marital Status",
             "National ID",
+            "Emergency Contact Name", // Added Emergency Contact Name
             "Emergency Contact",
             "Residential Address",
             "Email",
@@ -1157,6 +1176,7 @@ export default function StaffTable() {
                 staff.gender || "",
                 staff.maritalStatus || "",
                 staff.nationalId || "",
+                staff.emergencyContactName || "", // Added emergencyContactName
                 staff.emergencyContact || "",
                 staff.address || "",
                 staff.email || "",
